@@ -1,5 +1,5 @@
 #usage
-#.\Import-PrivateDNSRecords.ps1 -dnsServerName "dns01" -csvPath "c:\temp\pdns.csv"
+#.\Import-PrivateDNSRecords.ps1 -dnsServerName "dnssrv01" -csvPath "c:\temp\pdns.csv"
 
 param
 (
@@ -8,7 +8,6 @@ param
     [Parameter(Mandatory = $true)]
     [string]$csvPath
 )
-
 
 # Import the DNS records from the CSV file
 Write-Output "Importing DNS records from CSV file..."
@@ -32,8 +31,17 @@ foreach ($dnsRecord in $dnsRecords) {
     $aRecordExists = Get-DnsServerResourceRecord -ZoneName $dnsRecord.Zone -Name $dnsRecord.Name -RRType A -ErrorAction SilentlyContinue
 
     if ($aRecordExists) {
-        # The A record already exists, so skip adding the record
-        Write-Error "A record '$($dnsRecord.Name)' already exists in zone '$($dnsRecord.Zone)'. Skipping record creation for $($dnsRecord.Name)."
+        # The A record already exists, so compare the IP address
+        Write-Output "A record '$($dnsRecord.Name)' already exists in zone '$($dnsRecord.Zone)'. Comparing IP addresses..."
+        $existingRecord = Get-DnsServerResourceRecord -ZoneName $dnsRecord.Zone -Name $dnsRecord.Name -RRType A
+        if ($existingRecord.RecordData.IPv4Address -ne $dnsRecord.Value) {
+            # The IP address is different, so warn the user
+            Write-Warning "IP address for A record '$($dnsRecord.Name)' in zone '$($dnsRecord.Zone)' is different from the CSV file. Existing IP address: $($existingRecord.RecordData.IPv4Address). New IP address: $($dnsRecord.Value)."
+        }
+        else {
+            # The IP address is the same, so skip adding the record
+            Write-Warning "A record '$($dnsRecord.Name)' already exists in zone '$($dnsRecord.Zone)' with the same IP address. Skipping record creation for $($dnsRecord.Name)."
+        }
     }
     else {
         # Check if the IP address is already in use
@@ -42,7 +50,7 @@ foreach ($dnsRecord in $dnsRecords) {
 
         if ($ipExists) {
             # The IP address is already in use, so skip adding the record
-            Write-Error "IP address '$($dnsRecord.Value)' is already in use in zone '$($dnsRecord.Zone)'. Skipping record creation for $($dnsRecord.Name)."
+            Write-Warning "IP address '$($dnsRecord.Value)' is already in use in zone '$($dnsRecord.Zone)'. Skipping record creation for $($dnsRecord.Name)."
         }
         else {
             # Add the DNS A record to the DNS zone
