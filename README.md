@@ -86,7 +86,7 @@ The CSV file should contain the following columns:
 Output
 The script adds the DNS records to the specified DNS server.
 
-## Check-PrivateDNSRecords.ps1
+## Validate-PrivateDNSRecords.ps1
 
 This PowerShell script checks the Azure Private DNS records against your DNS Server from the records in the CSV file
 
