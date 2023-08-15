@@ -69,6 +69,8 @@ The following Parameters are required:
 
 **CSV File Format**
 
+___
+
 
 
 The CSV file should contain the following columns:
@@ -103,3 +105,25 @@ The script will then run a check against your DNS server for the public DNS reco
 **Parameters**
 
 **csvPath**: The path to the CSV file containing the DNS records to import
+
+**CSV File Format**
+
+___
+
+
+
+The CSV file should contain the following columns:
+
+**Zone**: The name of the Private DNS zone.
+
+
+**Name**: The name of the DNS record.
+
+
+**Value**: The IP address of the DNS record.
+
+## Scripts Roadmap
+
+1. Add checks for dependencies/pre-requisities
+2. Expand the validate script (Currently tested for storage, sql, synapse, azure backup) - please report any endpoints not validating for enhancements
+3. Backup and export of Azure Private DNS Zones
