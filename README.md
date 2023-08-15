@@ -55,3 +55,17 @@ Value: The IP address of the DNS record.
 
 Output
 The script adds the DNS records to the specified DNS server.
+
+## Check-PrivateDNSRecords.ps1
+
+This PowerShell script checks the Azure Private DNS records against your DNS Server from the records in the CSV file
+
+### Usage
+
+To use the script, ensure the `-csvPath` parameter is filled with the location of the CSV File.
+
+The script will then run a check against your DNS server for the public DNS records of the private link records in the CSV file, if you have Private DNS setup in Azure then the public DNS will show a CNAME record for the private link address. If you have utilised the Export/Import process in this repo, you will have configured the Forward Lookup Zones with the relevant A records that relate to the private link addresses.
+
+```powershell
+.\scripts\Check-PrivateDNSRecords.ps1 -csvPath "c:\temp\pdns.csv"
+```
