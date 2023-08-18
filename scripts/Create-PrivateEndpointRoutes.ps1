@@ -12,7 +12,7 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$routeTableName,
     [Parameter(Mandatory=$true)]
-    $nextHopIpAddress
+    [string]$nextHopIpAddress
 )
 
 # Authenticate to Azure
