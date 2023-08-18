@@ -10,7 +10,9 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$routetableresourceGroupName,
     [Parameter(Mandatory=$true)]
-    [string]$routeTableName
+    [string]$routeTableName,
+    [Parameter(Mandatory=$true)]
+    $nextHopIpAddress
 )
 
 # Authenticate to Azure
@@ -56,7 +58,7 @@ foreach ($ipv4AddressAndName in $ipv4AddressesAndNames) {
     $routeConfig = Get-AzRouteConfig -Name $ipv4AddressAndName.dnsName -RouteTable $routeTable -ErrorAction SilentlyContinue
     if ($routeConfig -eq $null) {
         Write-Output "Creating route for DNS name '$($ipv4AddressAndName.dnsName)' and IPv4 address '$($ipv4AddressAndName.ipv4Address)' in route table '$routeTableName'..."
-        Add-AzRouteConfig -Name $ipv4AddressAndName.dnsName -AddressPrefix "$($ipv4AddressAndName.ipv4Address)/32" -NextHopType VirtualAppliance -NextHopIpAddress "10.14.0.68" -RouteTable $routeTable
+        Add-AzRouteConfig -Name $ipv4AddressAndName.dnsName -AddressPrefix "$($ipv4AddressAndName.ipv4Address)/32" -NextHopType VirtualAppliance -NextHopIpAddress $nextHopIpAddress -RouteTable $routeTable
     }
     else {
         Write-Output "Route for DNS name '$($ipv4AddressAndName.dnsName)' already exists in route table '$routeTableName'. Skipping..."
